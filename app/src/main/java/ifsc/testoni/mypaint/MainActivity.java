@@ -1,11 +1,7 @@
 package ifsc.testoni.mypaint;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.DialogInterface;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -24,48 +20,48 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         simplePaint = findViewById(R.id.simplePaint);
         colorPicker = findViewById(R.id.colorPicker);
-        colorPicker.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                colorPickerSelectColor();
-            }
-        });
     }
 
-    public void colorPickerSelectColor() {
+    public void colorPickerSelectColor(View view) {
         new ColorPickerDialog.Builder(this)
-                .setTitle("ColorPicker Dialog")
-                .setPreferenceName("MyColorPickerDialog")
-                .setPositiveButton(getString(R.string.confirm),
-                        new ColorEnvelopeListener() {
-                            @Override
-                            public void onColorSelected(ColorEnvelope envelope, boolean fromUser) {
-                                setLayoutColor(envelope);
-                            }
-                        })
-                .setNegativeButton(getString(R.string.cancel),
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                dialogInterface.dismiss();
-                            }
-                        })
-                .attachAlphaSlideBar(true) // the default value is true.
-                .attachBrightnessSlideBar(true)  // the default value is true.
-                .setBottomSpace(12) // set a bottom space between the last slidebar and buttons.
-                .show();
+            .setTitle("Seletor de cores")
+            .setPreferenceName("MyColorPicker")
+            .setPositiveButton(getString(R.string.confirm),
+                    (ColorEnvelopeListener) (envelope, fromUser) -> handleColorPickerConfirm(envelope))
+            .setNegativeButton(getString(R.string.cancel),
+                    (dialogInterface, i) -> dialogInterface.dismiss())
+            .attachAlphaSlideBar(true)
+            .attachBrightnessSlideBar(true)
+            .setBottomSpace(12)
+            .show();
     }
 
-    public void handleResetDrawingClick(View view) {
-        simplePaint.removeLastLayer();
+    public void handleSelectLine(View view) {
+        simplePaint.setDrawingShape(new Line());
     }
 
-    public void handleClearDrawingsClick(View view) {
-        simplePaint.removeDrawings();
+    public void handleSelectScribble(View view) {
+        simplePaint.setDrawingShape(new Scribble());
     }
 
-    private void setLayoutColor(ColorEnvelope envelope) {
-        simplePaint.setColor(Color.valueOf(envelope.getColor()));
-        colorPicker.setColorFilter(Color.valueOf(envelope.getColor()).toArgb());
+    public void handleSelectCircle(View view) {
+        simplePaint.setDrawingShape(new Circle());
+    }
+
+    public void handleSelectSquare(View view) {
+        simplePaint.setDrawingShape(new Square());
+    }
+
+    public void handleUndoDrawing(View view) {
+        simplePaint.undoLastDrawing();
+    }
+
+    public void handleDeleteAllDrawings(View view) {
+        simplePaint.undoAllDrawings();
+    }
+
+    private void handleColorPickerConfirm(ColorEnvelope envelope) {
+        simplePaint.setColor(envelope.getColor());
+        colorPicker.setColorFilter(envelope.getColor());
     }
 }

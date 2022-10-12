@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:onClick="handleSelectSquare"
     tools:context=".MainActivity">
 
     <ifsc.testoni.mypaint.SimplePaint
@@ -21,24 +22,39 @@
         android:id="@+id/colorPicker"
         android:layout_width="51dp"
         android:layout_height="50dp"
+        android:onClick="colorPickerSelectColor"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.65"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.507"
         app:srcCompat="@drawable/wheel" />
+
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="handleDeleteAllDrawings"
+        app:layout_constraintBottom_toTopOf="@+id/guideline2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.471"
+        app:layout_constraintStart_toEndOf="@+id/colorPicker"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_delete" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="93dp" />
+        app:layout_constraintGuide_begin="113dp" />
 
     <ImageButton
         android:id="@+id/imageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="handleResetDrawingClick"
+        android:onClick="handleUndoDrawing"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toStartOf="@+id/colorPicker"
         app:layout_constraintHorizontal_bias="0.879"
@@ -46,15 +62,43 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_revert" />
 
-    <ImageButton
-        android:id="@+id/imageButton2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="handleClearDrawingsClick"
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="95dp"
+        android:layout_height="91dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.121"
-        app:layout_constraintStart_toEndOf="@+id/colorPicker"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_delete" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RadioButton
+            android:id="@+id/radioButton2"
+            android:layout_width="72dp"
+            android:layout_height="24dp"
+            android:onClick="handleSelectLine"
+            android:text="Linha" />
+
+        <RadioButton
+            android:id="@+id/radioButton3"
+            android:layout_width="96dp"
+            android:layout_height="22dp"
+            android:onClick="handleSelectScribble"
+            android:text="Rabisco" />
+
+        <RadioButton
+            android:id="@+id/radioButton11"
+            android:layout_width="96dp"
+            android:layout_height="22dp"
+            android:onClick="handleSelectSquare"
+            android:text="Quadrado" />
+
+        <RadioButton
+            android:id="@+id/radioButton"
+            android:layout_width="96dp"
+            android:layout_height="22dp"
+            android:onClick="handleSelectCircle"
+            android:text="Circulo" />
+    </RadioGroup>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

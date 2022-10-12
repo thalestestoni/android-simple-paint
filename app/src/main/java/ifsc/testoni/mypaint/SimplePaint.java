@@ -7,33 +7,36 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.ColorDrawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
-import java.util.List;
 import java.util.Stack;
 
 public class SimplePaint extends View {
     Stack<Drawing> drawings;
-    Drawing drawing;
+    Drawing currentDrawing;
     ColorDrawable currentColor;
 
     public SimplePaint(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        drawings = new Stack<>();
-        currentColor = new ColorDrawable();
-        currentColor.setColor(Color.BLACK);
-        startCurrentDrawingLayer();
+        this.drawings = new Stack<>();
+        this.currentColor = new ColorDrawable();
+        this.currentColor.setColor(Color.BLACK);
+        this.currentDrawing = new Drawing(loadPaintDefaults(new Paint()), new Path(), new Scribble());
     }
 
-    public void startCurrentDrawingLayer() {
-        drawing = new Drawing(new Paint(), new Path());
-        drawing.getPaint().setColor(currentColor.getColor());
-        drawing.getPaint().setStyle(Paint.Style.STROKE);
-        drawing.getPaint().setStrokeWidth(20);
-        drawing.getPaint().setColor(currentColor.getColor());
+    private void startNewDrawingLayer() {
+        currentDrawing = new Drawing(loadPaintDefaults(new Paint()), new Path(), currentDrawing.shape.newInstance());
+    }
+
+    private Paint loadPaintDefaults(Paint paint) {
+        paint.setColor(currentColor.getColor());
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setStrokeWidth(20);
+        return paint;
     }
 
     @Override
@@ -41,31 +44,31 @@ public class SimplePaint extends View {
         super.onDraw(canvas);
 
         for (Drawing drawing : drawings) {
-            canvas.drawPath(drawing.getPath(), drawing.getPaint());
+            drawing.toDraw(canvas);
         }
 
-        canvas.drawPath(drawing.getPath(), drawing.getPaint());
+        currentDrawing.toDraw(canvas);
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float x, y;
-
-        x = event.getX();
-        y = event.getY();
+        float x = event.getX();
+        float y = event.getY();
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                drawing.getPath().moveTo(x, y);
-                drawing.getPath().lineTo(x, y);
+                currentDrawing.path.moveTo(x, y);
+                currentDrawing.path.lineTo(x, y);
+                currentDrawing.shape.setFirstPoint(x, y);
+                currentDrawing.shape.setSecondPoint(x, y);
                 break;
             case MotionEvent.ACTION_MOVE:
-                drawing.getPath().lineTo(x, y);
+                currentDrawing.path.lineTo(x, y);
+                currentDrawing.shape.setSecondPoint(x, y);
                 break;
             case MotionEvent.ACTION_UP:
-                drawing.getPath().lineTo(x, y);
-                drawings.push(new Drawing(drawing.getPaint(), drawing.getPath()));
-                startCurrentDrawingLayer();
+                drawings.push(currentDrawing);
+                startNewDrawingLayer();
                 break;
             default:
                 break;
@@ -76,17 +79,21 @@ public class SimplePaint extends View {
         return true;
     }
 
-    public void setColor(Color color) {
-        currentColor.setColor(color.toArgb());
-        drawing.getPaint().setColor(color.toArgb());
+    public void setColor(int color) {
+        currentColor.setColor(color);
+        currentDrawing.paint.setColor(color);
     }
 
-    public void removeLastLayer() {
+    public void setDrawingShape(Shape shape) {
+        currentDrawing.shape = shape;
+    }
+
+    public void undoLastDrawing() {
         drawings.pop();
         invalidate();
     }
 
-    public void removeDrawings() {
+    public void undoAllDrawings() {
         drawings.clear();
         invalidate();
     }

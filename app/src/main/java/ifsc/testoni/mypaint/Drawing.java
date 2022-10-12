@@ -1,22 +1,21 @@
 package ifsc.testoni.mypaint;
 
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 
 public class Drawing {
-    private Paint paint;
-    private Path path;
+    public Paint paint;
+    public Path path;
+    public Shape shape;
 
-    public Drawing(Paint paint, Path path) {
+    public Drawing(Paint paint, Path path, Shape shape) {
         this.paint = paint;
         this.path = path;
+        this.shape = shape;
     }
 
-    public Paint getPaint() {
-        return this.paint;
-    }
-
-    public Path getPath() {
-       return this.path;
+    public void toDraw(Canvas canvas) {
+        shape.draw(canvas, path, paint);
     }
 }
